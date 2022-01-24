@@ -1,194 +1,82 @@
-# newrelic-infrastructure
+[![New Relic Experimental header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Experimental.png)](https://opensource.newrelic.com/oss-category/#new-relic-experimental)
 
-## Chart Details
+# newrelic-infrastructure-v3
 
-This chart will deploy the New Relic Infrastructure agent as a Daemonset.
+![Version: 3.0.6](https://img.shields.io/badge/Version-3.0.6-informational?style=flat-square) ![AppVersion: 0.3.0-pre](https://img.shields.io/badge/AppVersion-0.3.0--pre-informational?style=flat-square)
 
-## Configuration
+A Helm chart to deploy the New Relic Kubernetes monitoring solution
 
-| Parameter                                                  | Description                                                                                                                                                                                                                                       | Default                                                                             |
-|------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| `global.cluster` - `cluster`                               | The cluster name for the Kubernetes cluster.                                                                                                                                                                                                      |                                                                                     |
-| `global.licenseKey` - `licenseKey`                         | The [license key](https://docs.newrelic.com/docs/accounts/install-new-relic/account-setup/license-key) for your New Relic Account. This will be preferred configuration option if both `licenseKey` and `customSecret` are specified.             |                                                                                     |
-| `global.customSecretName`       - `customSecretName`       | Name of the Secret object where the license key is stored                                                                                                                                                                                         |                                                                                     |
-| `global.customSecretLicenseKey` - `customSecretLicenseKey` | Key  in the Secret object where the license key is stored.                                                                                                                                                                                        |                                                                                     |
-| `global.fargate`                                           | Must be set to `true` when deploying in an EKS Fargate environment. Prevents DaemonSet pods from being scheduled in Fargate nodes.                                                                                                                |                                                                                     |
-| `config`                                                   | A `newrelic.yml` file if you wish to provide.                                                                                                                                                                                                     |                                                                                     |
-| `enableLinux`                                              | Deploys the `DaemonSet` on all Linux nodes                                                                                                                                                                                                        | `true`                                                                              |
-| `enableWindows`                                            | Deploys the `DaemonSet` on all Windows nodes (see [Running on Windows](#running-on-windows))                                                                                                                                                      | `false`                                                                             |
-| `integrations_config`                                      | List of Integrations configuration to monitor services running on Kubernetes. More information on can be found [here](https://docs.newrelic.com/docs/integrations/kubernetes-integration/link-apps-services/monitor-services-running-kubernetes). |                                                                                     |
-| `disableKubeStateMetrics`                                  | Disables kube-state-metrics data parsing if the value is `true`.                                                                                                                                                                                  | `false`                                                                             |
-| `kubeStateMetricsUrl`                                      | If provided, the discovery process for kube-state-metrics endpoint won't be triggered. Example: http://172.17.0.3:8080                                                                                                                            |                                                                                     |
-| `kubeStateMetricsPodLabel`                                 | If provided, the kube-state-metrics pod will be discovered using this label. (should be `true` on target pod)                                                                                                                                     |                                                                                     |
-| `kubeStateMetricsTimeout`                                  | Timeout for accessing kube-state-metrics in milliseconds. If not set the newrelic default is 5000                                                                                                                                                 |                                                                                     |
-| `kubeStateMetricsScheme`                                   | If `kubeStateMetricsPodLabel` is present, it changes the scheme used to send to request to the pod.                                                                                                                                               | `http`                                                                              |
-| `kubeStateMetricsPort`                                     | If `kubeStateMetricsPodLabel` is present, it changes the port queried in the pod.                                                                                                                                                                 | 8080                                                                                |
-| `rbac.create`                                              | Enable Role-based authentication                                                                                                                                                                                                                  | `true`                                                                              |
-| `rbac.pspEnabled`                                          | Enable pod security policy support                                                                                                                                                                                                                | `false`                                                                             |
-| `privileged`                                               | Enable privileged mode.                                                                                                                                                                                                                           | `true`                                                                              |
-| `windowsSecurityContext`                                   | Set security context values for the Windows daemonset.                                                                                                                                                                                            | `{}`                                                                                |
-| `image.repository`                                         | The container to pull.                                                                                                                                                                                                                            | `newrelic/infrastructure-k8s`                                                       |
-| `image.pullPolicy`                                         | The pull policy.                                                                                                                                                                                                                                  | `IfNotPresent`                                                                      |
-| `image.pullSecrets`                                        | Image pull secrets.                                                                                                                                                                                                                               | `nil`                                                                               |
-| `image.tag`                                                | The version of the container to pull.                                                                                                                                                                                                             | `2.9.0`                                                                             |
-| `image.windowsTag`                                         | (Deprecated) The version of the Windows container to pull.                                                                                                                                                                                        | `1.21.0-windows-1809-alpha`                                                         |
-| `resources`                                                | Any resources you wish to assign to the pod.                                                                                                                                                                                                      | See Resources below                                                                 |
-| `podAnnotations`                                           | If you wish to provide additional annotations to apply to the pod(s), specify them here.                                                                                                                                                          |                                                                                     |
-| `verboseLog`                                               | Should the agent log verbosely. (Boolean)                                                                                                                                                                                                         | `false`                                                                             |
-| `priorityClassName`                                        | Scheduling priority of the pod                                                                                                                                                                                                                    | `nil`                                                                               |
-| `nodeSelector`                                             | Node label to use for scheduling                                                                                                                                                                                                                  | `nil`                                                                               |
-| `windowsNodeSelector`                                      | Node label to use for scheduling on Windows nodes                                                                                                                                                                                                 | `{ kubernetes.io/os: windows }`                                                     |
-| `tolerations`                                              | List of node taints to tolerate                                                                                                                                                                                                                   | See Tolerations below                                                               |
-| `updateStrategy`                                           | Update strategy the DaemonSets (Linux and Windows)                                                                                                                                                                                                | `type=RollingUpdate,rollingUpdate.maxUnavailable=1`                                 |
-| `serviceAccount.create`                                    | If true, a service account would be created and assigned to the deployment                                                                                                                                                                        | true                                                                                |
-| `serviceAccount.name`                                      | The service account to assign to the deployment. If `serviceAccount.create` is true then this name will be used when creating the service account                                                                                                 |                                                                                     |
-| `serviceAccount.annotations`                               | The annotations to add to the service account if `serviceAccount.create` is set to true.                                                                                                                                                          |                                                                                     |
-| `etcdTlsSecretName`                                        | Name of the secret containing the cacert, cert and key used for setting the mTLS config for retrieving metrics from ETCD.                                                                                                                         |                                                                                     |
-| `etcdTlsSecretNamespace`                                   | Namespace where the secret specified in `etcdTlsSecretName` was created.                                                                                                                                                                          | `default`                                                                           |
-| `etcdEndpointUrl`                                          | Explicitly sets the etcd component url.                                                                                                                                                                                                           |                                                                                     |
-| `apiServerSecurePort`                                      | Set to query the API Server over a secure port.                                                                                                                                                                                                   |                                                                                     |
-| `apiServerEndpointUrl`                                     | Explicitly sets the api server component url.                                                                                                                                                                                                     |                                                                                     |
-| `schedulerEndpointUrl`                                     | Explicitly sets the scheduler component url.                                                                                                                                                                                                      |                                                                                     |
-| `controllerManagerEndpointUrl`                             | Explicitly sets the controller manager component url.                                                                                                                                                                                             |                                                                                     |
-| `eventQueueDepth`                                          | Increases the in-memory cache of the agent to accommodate for more samples at a time.                                                                                                                                                             |                                                                                     |
-| `enableProcessMetrics`                                     | Enables the sending of process metrics to New Relic.                                                                                                                                                                                              | `(empty)` (Account default<sup>1</sup>)                                             |
-| `global.nrStaging` - `nrStaging`                           | Send data to staging (requires a staging license key).                                                                                                                                                                                            | `false`                                                                             |
-| `discoveryCacheTTL`                                        | Duration since the discovered endpoints are stored in the cache until they expire. Valid time units: 'ns', 'us', 'ms', 's', 'm', 'h'                                                                                                              | `1h`                                                                                |
-| `windowsOsList`                                            | List of `windowsOs` to be monitored, for each object specified it will create a different daemonset for the specified Windows version.                                                                                                            | [{"version":2004,"imageTag":"2.2.0-windows-2004-alpha","buildNumber":"10.0.19041"}] |
-| `windowsOsList[].version`                                  | Windows version monitored.                                                                                                                                                                                                                        | `2004`                                                                              |
-| `windowsOsList[].imageTag`                                 | Tag for the container image compatible with the specified build version.                                                                                                                                                                          | `2.2.0-windows-2004-alpha`                                                          |
-| `windowsOsList[].buildNumber`                              | Build number associated to the specified Windows version. This value will be used to create a node selector `node.kubernetes.io/windows-build=buildNumber`                                                                                        | `10.0.19041`                                                                        |
-| `openshift.enabled`                                        | Enables OpenShift configuration options.                                                                                                                                                                                                          | `false`                                                                             |
-| `openshift.version`                                        | OpenShift version for witch enable specific configuration options. Values supported ["3.x","4.x"]. For 4.x it includes OpenShift specific Control Plane endpoints and CRI-O runtime                                                               |                                                                                     |
-| `runAsUser`                                                | Set when running in unprivileged mode or when hitting UID constraints in OpenShift.                                                                                                                                                               | `1000`                                                                              |
-| `daemonSet.annotations`                                    | The annotations to add to the `DaemonSet`.                                                                                                                                                                                                        |                                                                                     |
+**Homepage:** <https://docs.newrelic.com/docs/kubernetes-pixie/kubernetes-integration/get-started/introduction-kubernetes-integration/>
 
-> 1: Default value will depend on the creation date of the account owning the specified License Key:
-> * Accounts and subaccounts created before July 20, 2020 will report, by default, process metrics unless this config option is explicitly set to `false`. This is done to respect the old default behavior of the Infrastructure Agent.
-> * New Relic accounts created after July 20, 2020 will **not** send, by default, any process metrics unless this config option is explicitly set to `true`.
->
-> [Additional information](https://docs.newrelic.com/docs/release-notes/infrastructure-release-notes/infrastructure-agent-release-notes/new-relic-infrastructure-agent-1120)
-## Example
+## Source Code
 
-Make sure you have [added the New Relic chart repository.](../../README.md#installing-charts)
+* <https://github.com/newrelic/nri-kubernetes/>
+* <https://github.com/newrelic/helm-charts/tree/master/charts/newrelic-infrastructure>
 
-Then, to install this chart, run the following command:
+## Requirements
 
-```sh
-helm install newrelic/newrelic-infrastructure \
---set licenseKey=<enter_new_relic_license_key> \
---set cluster=my-k8s-cluster
-```
+Kubernetes: `>=1.16.0-0`
 
-## Globals
+## Values
 
-**Important:** global parameters have higher precedence than locals with the same name.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| common | object | See `values.yaml` | Config that applies to all instances of the solution: kubelet, ksm, control plane and sidecars. |
+| common.agentConfig | object | `{}` | Config for the Infrastructure agent. Will be used by the forwarder sidecars and the agent running integrations. See: https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/configuration/infrastructure-agent-configuration-settings/ |
+| common.config.interval | duration | `15s` if `lowDataMode == false`, `30s` otherwise. | Intervals larger than 40s are not supported and will cause the NR UI to not behave properly. Any non-nil value will override the `lowDataMode` default. |
+| controlPlane | object | See `values.yaml` | Configuration for the control plane scraper. |
+| controlPlane.affinity | object | Deployed only in master nodes. | Affinity for the control plane DaemonSet. |
+| controlPlane.config.apiServer | object | Common settings for most K8s distributions. | API Server monitoring configuration |
+| controlPlane.config.apiServer.enabled | bool | `true` | Enable API Server monitoring |
+| controlPlane.config.controllerManager | object | Common settings for most K8s distributions. | Controller manager monitoring configuration |
+| controlPlane.config.controllerManager.enabled | bool | `true` | Enable controller manager monitoring. |
+| controlPlane.config.etcd | object | Common settings for most K8s distributions. | ETCD monitoring configuration |
+| controlPlane.config.etcd.enabled | bool | `true` | Enable etcd monitoring. Might require manual configuration in some environments. |
+| controlPlane.config.scheduler | object | Common settings for most K8s distributions. | Scheduler monitoring configuration |
+| controlPlane.config.scheduler.enabled | bool | `true` | Enable scheduler monitoring. |
+| controlPlane.enabled | bool | `true` | Deploy control plane monitoring component. |
+| controlPlane.kind | string | `"DaemonSet"` | How to deploy the control plane scraper. If autodiscovery is in use, it should be `DaemonSet`. Advanced users using static endpoints set this to `Deployment` to avoid reporting metrics twice. |
+| controlPlane.unprivilegedHostNetwork | bool | `false` | Run Control Plane scraper with `hostNetwork` even if `privileged` is set to false. `hostNetwork` is required for most control plane configurations, as they only accept connections from localhost. |
+| customAttributes | object | `{}` | Custom attributes to be added to the data reported by all integrations reporting in the cluster. |
+| images | object | See `values.yaml` | Images used by the chart for the integration and agents. |
+| images.agent.repository | string | `"newrelic/infrastructure-bundle"` | Image for the agent and integrations bundle. |
+| images.agent.tag | string | `"2.8.1"` | Tag for the agent and integrations bundle. |
+| images.forwarder.repository | string | `"newrelic/k8s-events-forwarder"` | Image for the agent sidecar. |
+| images.forwarder.tag | string | `"1.22.0"` | Tag for the agent sidecar. |
+| images.integration.repository | string | `"newrelic/nri-kubernetes"` | Image for the kubernetes integration. |
+| images.integration.tag | string | `"3.0.1-pre"` | Tag for the kubernetes integration. |
+| integrations | object | `{}` | Config files for other New Relic integrations that should run in this cluster. |
+| ksm | object | See `values.yaml` | Configuration for the Deployment that collects state metrics from KSM (kube-state-metrics). |
+| ksm.enabled | bool | `true` | Enable cluster state monitoring. Advanced users only. Setting this to `false` is not supported and will break the New Relic experience. |
+| ksm.resources | object | 100m/150M -/850M | Resources for the KSM scraper pod. Keep in mind that sharding is not supported at the moment, so memory usage for this component ramps up quickly on large clusters. |
+| kubelet | object | See `values.yaml` | Configuration for the DaemonSet that collects metrics from the Kubelet. |
+| kubelet.enabled | bool | `true` | Enable kubelet monitoring. Advanced users only. Setting this to `false` is not supported and will break the New Relic experience. |
+| lowDataMode | bool | `false` | Send less data by incrementing the interval from `15s` (the default when `lowDataMode` is `false` or `nil`) to `30s`. Non-nil values of `common.config.interval` will override this value. |
+| podAnnotations | object | `{}` | Annotations to be added to all pods created by the integration. |
+| podLabels | object | `{}` | Labels to be added to all pods created by the integration. |
+| priorityClassName | string | `""` | Pod scheduling priority Ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/ |
+| privileged | bool | `true` | Run the integration with full access to the host filesystem and network. Running in this mode allows reporting fine-grained cpu, memory, process and network metrics for your nodes. Additionally, it allows control plane monitoring, which requires hostNetwork to work. |
+| rbac | object | `{"create":true,"pspEnabled":false}` | Settings controlling RBAC objects creation. |
+| rbac.create | bool | `true` | Whether the chart should automatically create the RBAC objects required to run. |
+| rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
+| securityContext | object | See `values.yaml` | Security context used in all the containers of the pods When `privileged == true`, the Kubelet scraper will run as root and ignore these settings. |
+| serviceAccount | object | See `values.yaml` | Settings controlling ServiceAccount creation. |
+| serviceAccount.create | bool | `true` | Whether the chart should automatically create the ServiceAccount objects required to run. |
+| updateStrategy | object | See `values.yaml` | Update strategy for the DaemonSets deployed. |
+| verboseLog | bool | `false` | Enable verbose logging for all components. |
 
-These are meant to be used when you are writing a chart with subcharts. It helps to avoid
-setting values multiple times on different subcharts.
+## Maintainers
 
-More information on globals and subcharts can be found at [Helm's official documentation](https://helm.sh/docs/topics/chart_template_guide/subcharts_and_globals/).
+* [alvarocabanas](https://github.com/alvarocabanas)
+* [carlossscastro](https://github.com/carlossscastro)
+* [gsanchezgavier](https://github.com/gsanchezgavier)
+* [kang-makes](https://github.com/kang-makes)
+* [paologallinaharbur](https://github.com/paologallinaharbur)
+* [roobre](https://github.com/roobre)
 
-| Parameter                       |
-| ------------------------------- |
-| `global.cluster`                |
-| `global.licenseKey`             |
-| `global.customSecretName`       |
-| `global.customSecretLicenseKey` |
+## Past Contributors
 
-## Resources
-
-The default set of resources assigned to the pods is shown below:
-
-```yaml
-resources:
-  limits:
-    memory: 150M
-  requests:
-    cpu: 100m
-    memory: 30M
-```
-
-## Tolerations
-
-The default set of relations assigned to our daemonset is shown below:
-
-```yaml
-- operator: "Exists"
-  effect: "NoSchedule"
-- operator: "Exists"
-  effect: "NoExecute"
-```
-
-## Running on Windows
-
-When using containers in Windows, the container host version and the container image version must be the same. Our Kubernetes integration support Windows versions 1809 and 1909.
-
-To check your Windows version:
-
-* Open a command windows
-* Run the following command:
-```powershell
-Reg Query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v
-ReleaseIdcmd.exe
-```
-
-### Example: Get Kubernetes for Windows from a BusyBox container
-```bash
-$ kubectl exec -it busybox1-766bb4d6cc-rmsnj -- Reg Query
-    "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v ReleaseId
-```
-
-Output
-```bash
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion
-	ReleaseId	REG_SZ	1809
-```
-
-### Windows Limitations
-
-* The Windows agent only sends the Kubernetes samples (`K8sNodeSample`, `K8sPodSample`, etc.)
-    * `SystemSample`, `StorageSample`, `NetworkSample`, and `ProcessSample` are not generated.
-* Some [Kubernetes metrics](https://docs.newrelic.com/docs/integrations/kubernetes-integration/understand-use-data/understand-use-data#metrics) are missing because the Windows kubelet doesn’t have them:
-    * Node:
-        * `fsInodes`: not sent
-        * `fsInodesFree`: not sent
-        * `fsInodesUsed`: not sent
-        * `memoryMajorPageFaultsPerSecond`: always returns zero as a value
-        * `memoryPageFaults`: always returns zero as a value
-        * `memoryRssBytes`: always returns zero as a value
-        * `runtimeInodes`: not sent
-        * `runtimeInodesFree`: not sent
-        * `runtimeInodesUsed`: not sent
-    * Pod:
-        * `net.errorsPerSecond`: not sent
-        * `net.rxBytesPerSecond`: not sent
-        * `net.txBytesPerSecond`: not sent
-    * Container:
-        * `containerID`: not sent
-        * `containerImageID`: not sent
-        * `memoryUsedBytes`: in the UI, this is displayed in the pod card that appears when you click on a pod, and will show no data. We will soon fix this by updating our charts to use memoryWorkingSetBytes instead.
-    * Volume:
-        * `fsUsedBytes`: zero, so fsUsedPercent is zero
-
-#### Multiple Windows node builds running in the same cluster
-
-Multiple windows build for the nodes are supported by this chart. A different daemonSet is generated for each of them as specified by the value object `windowsOsList`.
-
-Accordigly the old value for the Windows image `windowsTag` is deprecated and will be removed in the future. Currently if specified still overwrite the image tag specified by the windowsOsList.
-
-Notice that the [kubernetes standard](https://kubernetes.io/docs/setup/production-environment/windows/user-guide-windows-containers/) for running containers over Windows, requires the presence of the label on the node `node.kubernetes.io/windows-build`. This label is added automatically to each node for versions `>1.17` but should be added manually otherwise.
-This helm charts expects the presence of such labels on the different Windows node and schedules through nodeSelectors the daemonSets accordingly.
-
-# Config file
-
-If you wish to provide your own `newrelic.yml` you may do so under `config`. There are a few notable exceptions you should be aware of. Some options have been omitted because they are handled either by variables, or a secret. They are `display_name`, `license_key`, `log_file` and `verbose`.
-
-
-# Past Contributors
-
-This chart started as a community project in the [stable Helm chart repository](github.com/helm/charts/). New Relic is very thankful
-for all the 15+ community members that contributed and helped maintain the chart there over the years:
+Previous iterations of this chart started as a community project in the [stable Helm chart repository](github.com/helm/charts/). New Relic is very thankful for all the 15+ community members that contributed and helped maintain the chart there over the years:
 
 * coreypobrien
 * sstarcher
