@@ -1,23 +1,29 @@
-{{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
 */}}
 {{- define "newrelic.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
 */}}
 {{- define "newrelic.fullname" -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- if ne $name .Release.Name -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s" $name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
 
 {{/* Generate mode label */}}
 {{- define "newrelic.mode" }}
@@ -28,114 +34,109 @@ unprivileged
 {{- end }}
 {{- end -}}
 
-{{/* Generate basic labels */}}
-{{- define "newrelic.labels" }}
-app: {{ template "newrelic.name" . }}
-chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-heritage: {{.Release.Service }}
-release: {{.Release.Name }}
+{{/* Selector labels */}}
+{{- define "newrelic.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "newrelic.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/* Common labels */}}
+{{- define "newrelic.labels" -}}
+helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+{{ include "newrelic.selectorLabels" . }}
 mode: {{ template "newrelic.mode" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+
+{{/* Create the name of the service account to use */}}
+{{- define "newrelic.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "newrelic.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
 {{- end }}
 
 {{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "newrelic.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "newrelic.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "newrelic.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Create the image name depending on the "privileged" flag
-*/}}
-{{- define "newrelic.image" -}}
-{{- if .Values.privileged -}}
-"{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion}}"
-{{- else -}}
-"{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}-unprivileged"
-{{- end -}}
-{{- end -}}
-
-{{/*
-Return the licenseKey
-*/}}
-{{- define "newrelic.licenseKey" -}}
-{{- if .Values.global}}
-  {{- if .Values.global.licenseKey }}
-      {{- .Values.global.licenseKey -}}
-  {{- else -}}
-      {{- .Values.licenseKey | default "" -}}
-  {{- end -}}
-{{- else -}}
-    {{- .Values.licenseKey | default "" -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Return the cluster
+Return the cluster name
 */}}
 {{- define "newrelic.cluster" -}}
-{{- if .Values.global -}}
+{{- if .Values.cluster -}}
+  {{- .Values.cluster -}}
+{{- else if .Values.global -}}
   {{- if .Values.global.cluster -}}
-      {{- .Values.global.cluster -}}
-  {{- else -}}
-      {{- .Values.cluster | default "" -}}
+    {{- .Values.global.cluster -}}
   {{- end -}}
-{{- else -}}
-  {{- .Values.cluster | default "" -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Return the customSecretName
+Return local licenseKey if set, global otherwise
 */}}
-{{- define "newrelic.customSecretName" -}}
-{{- if .Values.global }}
-  {{- if .Values.global.customSecretName }}
-      {{- .Values.global.customSecretName -}}
-  {{- else -}}
-      {{- .Values.customSecretName | default "" -}}
+{{- define "newrelic.licenseKey" -}}
+{{- if .Values.licenseKey -}}
+  {{- .Values.licenseKey -}}
+{{- else if .Values.global -}}
+  {{- if .Values.global.licenseKey -}}
+    {{- .Values.global.licenseKey -}}
   {{- end -}}
-{{- else -}}
-    {{- .Values.customSecretName | default "" -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Return the customSecretLicenseKey
+Return the name of the secret holding the License Key
 */}}
-{{- define "newrelic.customSecretLicenseKey" -}}
-{{- if .Values.global }}
+{{- define "newrelic.licenseCustomSecretName" -}}
+{{- if .Values.customSecretName -}}
+  {{- .Values.customSecretName -}}
+{{- else if .Values.global -}}
+  {{- if .Values.global.customSecretName -}}
+    {{- .Values.global.customSecretName -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the name of the secret holding the License Key
+*/}}
+{{- define "newrelic.licenseSecretName" -}}
+{{ include "newrelic.licenseCustomSecretName" . | default (printf "%s-license" (include "newrelic.fullname" . )) }}
+{{- end -}}
+
+{{/*
+Return the name key for the License Key inside the secret
+*/}}
+{{- define "newrelic.licenseCustomSecretKey" -}}
+{{- if .Values.customSecretLicenseKey -}}
+  {{- .Values.customSecretLicenseKey -}}
+{{- else if .Values.global -}}
   {{- if .Values.global.customSecretLicenseKey }}
-      {{- .Values.global.customSecretLicenseKey -}}
-  {{- else -}}
-      {{- .Values.customSecretLicenseKey | default "" -}}
+    {{- .Values.global.customSecretLicenseKey -}}
   {{- end -}}
-{{- else -}}
-    {{- .Values.customSecretLicenseKey | default "" -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return the name key for the License Key inside the secret
+*/}}
+{{- define "newrelic.licenseSecretKey" -}}
+{{ include "newrelic.licenseCustomSecretKey" . | default "licenseKey" }}
 {{- end -}}
 
 {{/*
 Returns nrStaging
 */}}
 {{- define "newrelic.nrStaging" -}}
-{{- if .Values.global }}
-  {{- if .Values.global.nrStaging }}
+{{- if .Values.nrStaging -}}
+  {{- .Values.nrStaging -}}
+{{- else if .Values.global -}}
+  {{- if .Values.global.nrStaging -}}
     {{- .Values.global.nrStaging -}}
   {{- end -}}
-{{- else if .Values.nrStaging }}
-  {{- .Values.nrStaging -}}
 {{- end -}}
 {{- end -}}
 
@@ -143,44 +144,100 @@ Returns nrStaging
 Returns fargate
 */}}
 {{- define "newrelic.fargate" -}}
-{{- if .Values.global }}
-  {{- if .Values.global.fargate }}
+{{- if .Values.fargate -}}
+  {{- .Values.fargate -}}
+{{- else if .Values.global -}}
+  {{- if .Values.global.fargate -}}
     {{- .Values.global.fargate -}}
   {{- end -}}
-{{- else if .Values.fargate }}
-  {{- .Values.fargate -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Returns the updateStrategy, either .Values.updateStrategy directly if it is an object, or wrapped if it is a string
-This is done to keep compatibility with old values and --reuse-values.
-Defining updateStrategy as a string is deprecated and will be removed in a future version of the chart.
+Returns lowDataMode
 */}}
-{{- define "newrelic.updateStrategy" -}}
-{{- if .Values.updateStrategy }}
-{{- if eq "string" (printf "%T" .Values.updateStrategy) }}
-updateStrategy:
-  type: {{ .Values.updateStrategy }}
-  {{- if eq .Values.updateStrategy "RollingUpdate" }}
-  rollingUpdate:
-    maxUnavailable: 1
+{{- define "newrelic.lowDataMode" -}}
+{{/* `get` will return "" (empty string) if value is not found, and the value otherwise, so we can type-assert with kindIs */}}
+{{- if (get .Values "lowDataMode" | kindIs "bool") -}}
+  {{- if .Values.lowDataMode -}}
+    {{/*
+        We want only to return when this is true, returning `false` here will template "false" (string) when doing
+        an `(include "newrelic-logging.lowDataMode" .)`, which is not an "empty string" so it is `true` if it is used
+        as an evaluation somewhere else.
+    */}}
+    {{- .Values.lowDataMode -}}
+  {{- end -}}
+{{- else -}}
+{{/* This allows us to use `$global` as an empty dict directly in case `Values.global` does not exists */}}
+{{- $global := index .Values "global" | default dict -}}
+{{- if get $global "lowDataMode" | kindIs "bool" -}}
+  {{- if $global.lowDataMode -}}
+    {{- $global.lowDataMode -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns the list of namespaces where secrets need to be accessed by the controlPlane integration to do mTLS Auth
+*/}}
+{{- define "newrelic.roleBindingNamespaces" -}}
+{{ $namespaceList := list }}
+{{- range $components := .Values.controlPlane.config }}
+  {{- if $components }}
+  {{- if $components.staticEndpoint }}
+      {{- if $components.staticEndpoint }}
+          {{- if $components.staticEndpoint.auth }}
+          {{- if $components.staticEndpoint.auth.mtls }}
+          {{- if $components.staticEndpoint.auth.mtls.secretNamespace }}
+          {{- $namespaceList = append $namespaceList $components.staticEndpoint.auth.mtls.secretNamespace -}}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+      {{- end }}
   {{- end }}
-{{- else }}
-updateStrategy:
-{{ .Values.updateStrategy | toYaml | indent 2 }}
-{{- end -}}
-{{- end -}}
+  {{- if $components.autodiscover }}
+    {{- range $autodiscover := $components.autodiscover }}
+      {{- if $autodiscover }}
+      {{- if $autodiscover.endpoints }}
+        {{- range $endpoint := $autodiscover.endpoints }}
+            {{- if $endpoint.auth }}
+            {{- if $endpoint.auth.mtls }}
+            {{- if $endpoint.auth.mtls.secretNamespace }}
+            {{- $namespaceList = append $namespaceList $endpoint.auth.mtls.secretNamespace -}}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+roleBindingNamespaces: {{- uniq $namespaceList | toYaml | nindent 0 }}
 {{- end -}}
 
 {{/*
-Returns if the template should render, it checks if the required values
-licenseKey and cluster are set.
+Returns Custom Attributes even if formatted as a json string
 */}}
-{{- define "newrelic.areValuesValid" -}}
-{{- $cluster := include "newrelic.cluster" . -}}
-{{- $licenseKey := include "newrelic.licenseKey" . -}}
-{{- $customSecretName := include "newrelic.customSecretName" . -}}
-{{- $customSecretLicenseKey := include "newrelic.customSecretLicenseKey" . -}}
-{{- and (or $licenseKey (and $customSecretName $customSecretLicenseKey)) $cluster}}
+{{- define "newrelic.customAttributesWithoutClusterName" -}}
+{{- if kindOf .Values.customAttributes | eq "string" -}}
+{{  .Values.customAttributes }}
+{{- else -}}
+{{ .Values.customAttributes | toJson }}
 {{- end -}}
+{{- end -}}
+
+{{- define "newrelic.customAttributes" -}}
+{{- merge (include "newrelic.customAttributesWithoutClusterName" . | fromJson) (dict "clusterName" (include "newrelic.cluster" .)) | toJson }}
+{{- end -}}
+
+{{- define "newrelic.integrationConfigDefaults" -}}
+{{- if include "newrelic.lowDataMode" . -}}
+interval: 30s
+{{- else  -}}
+interval: 15s
+{{- end -}}
+{{- end -}}
+
