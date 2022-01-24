@@ -2,7 +2,7 @@ dependencies:
   - name: newrelic-infrastructure
     repository: file://../newrelic-infrastructure
     condition: infrastructure.enabled
-    version: 2.8.0
+    version: 3.0.10-beta
 
   - name: nri-prometheus
     repository: file://../nri-prometheus
