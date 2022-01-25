@@ -3,7 +3,7 @@ dependencies:
     alias: newrelic-infrastructure
     repository: file://../newrelic-infrastructure-v3
     condition: infrastructure.enabled
-    version: 3.0.10
+    version: 3.0.11
 
   - name: nri-prometheus
     repository: file://../nri-prometheus
