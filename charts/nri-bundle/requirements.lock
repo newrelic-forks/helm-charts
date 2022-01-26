@@ -1,7 +1,7 @@
 dependencies:
 - name: newrelic-infrastructure-v3
   repository: file://../newrelic-infrastructure-v3
-  version: 3.0.11
+  version: 3.0.14
 - name: nri-prometheus
   repository: file://../nri-prometheus
   version: 1.13.1
@@ -29,5 +29,5 @@ dependencies:
 - name: newrelic-infra-operator
   repository: file://../newrelic-infra-operator
   version: 0.4.0
-digest: sha256:e5b6f15db9cfcca6f06088fc6f304ae33d5d0718c0b956bab679a35f4ff5bcbb
-generated: "2022-01-25T18:27:21.353383+01:00"
+digest: sha256:fe398f035a0826537fc1f9d3644bfce2971b5284f885af5a841dc185c76524b7
+generated: "2022-01-26T17:32:26.042702+01:00"
