@@ -1669,6 +1669,38 @@ entries:
   newrelic-infrastructure-v3:
   - apiVersion: v2
     appVersion: 3.0.2-pre
+    created: "2022-01-26T16:35:47.453268298Z"
+    description: A Helm chart to deploy the New Relic Kubernetes monitoring solution
+    digest: 4a5eeefc4716a1db0b9511b5fd3addae5697be78a4547ddb29dd5946d5fdb530
+    home: https://docs.newrelic.com/docs/kubernetes-pixie/kubernetes-integration/get-started/introduction-kubernetes-integration/
+    icon: https://newrelic.com/themes/custom/curio/assets/mediakit/NR_logo_Horizontal.svg
+    keywords:
+    - infrastructure
+    - newrelic
+    - monitoring
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: alvarocabanas
+      url: https://github.com/alvarocabanas
+    - name: carlossscastro
+      url: https://github.com/carlossscastro
+    - name: gsanchezgavier
+      url: https://github.com/gsanchezgavier
+    - name: kang-makes
+      url: https://github.com/kang-makes
+    - name: paologallinaharbur
+      url: https://github.com/paologallinaharbur
+    - name: roobre
+      url: https://github.com/roobre
+    name: newrelic-infrastructure-v3
+    sources:
+    - https://github.com/newrelic/nri-kubernetes/
+    - https://github.com/newrelic/helm-charts/tree/master/charts/newrelic-infrastructure
+    urls:
+    - https://github.com/newrelic-forks/helm-charts/releases/download/newrelic-infrastructure-v3-3.0.14/newrelic-infrastructure-v3-3.0.14.tgz
+    version: 3.0.14
+  - apiVersion: v2
+    appVersion: 3.0.2-pre
     created: "2022-01-25T16:26:23.115697137Z"
     description: A Helm chart to deploy the New Relic Kubernetes monitoring solution
     digest: feff9aaa3704323ab51ff6f94fc9baa335df3f53649850c7c9500fa2c2813b47
@@ -10514,4 +10546,4 @@ entries:
     urls:
     - https://github.com/newrelic/helm-charts/releases/download/synthetics-minion-1.0.17/synthetics-minion-1.0.17.tgz
     version: 1.0.17
-generated: "2022-01-25T17:29:13.633279811Z"
+generated: "2022-01-26T16:35:47.457054709Z"
