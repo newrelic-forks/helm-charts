@@ -25,7 +25,7 @@ dependencies:
   version: 1.4.3
 - name: pixie-operator-helm2-chart
   repository: https://pixie-operator-charts.storage.googleapis.com
-  version: 0.0.16
+  version: 0.0.18
 - name: newrelic-infra-operator
   repository: file://../newrelic-infra-operator
   version: 0.4.0
