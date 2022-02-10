@@ -29,5 +29,5 @@ dependencies:
 - name: newrelic-infra-operator
   repository: file://../newrelic-infra-operator
   version: 0.4.0
-digest: sha256:0ea7b4597feeae8e20bbca410d37e9690c9fa238ac90a4a471835113ef63754f
-generated: "2022-02-10T13:19:05.173827+01:00"
+digest: sha256:083123aa9042170e85498f0dbc113b5b440582d14c00e18ff9c60a95fc57fa57
+generated: "2022-02-10T14:16:54.833649+01:00"
