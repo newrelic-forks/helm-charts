@@ -228,6 +228,30 @@ entries:
     - https://github.com/newrelic-forks/helm-charts/releases/download/newrelic-infrastructure-3.0.9-beta/newrelic-infrastructure-3.0.9-beta.tgz
     version: 3.0.9-beta
   - apiVersion: v1
+    appVersion: 2.10.0
+    created: "2022-02-22T16:00:46.911884524Z"
+    description: A Helm chart to deploy the New Relic Infrastructure Agent as a DaemonSet
+    digest: 6a507482bb9b574321b0bdff4c4bcd1f131b71ee365b35d216ec6fe2ad255186
+    home: https://hub.docker.com/r/newrelic/infrastructure-k8s/
+    icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
+    keywords:
+    - infrastructure
+    - newrelic
+    - monitoring
+    maintainers:
+    - name: alvarocabanas
+    - name: carlossscastro
+    - name: gsanchezgavier
+    - name: kang-makes
+    - name: paologallinaharbur
+    - name: roobre
+    name: newrelic-infrastructure
+    sources:
+    - https://github.com/newrelic/helm-charts/tree/master/charts/newrelic-infrastructure
+    urls:
+    - https://github.com/newrelic-forks/helm-charts/releases/download/newrelic-infrastructure-2.8.1/newrelic-infrastructure-2.8.1.tgz
+    version: 2.8.1
+  - apiVersion: v1
     appVersion: 2.9.0
     created: "2022-01-19T10:07:50.402698166Z"
     description: A Helm chart to deploy the New Relic Infrastructure Agent as a DaemonSet
@@ -1669,6 +1693,38 @@ entries:
   newrelic-infrastructure-v3:
   - apiVersion: v2
     appVersion: 3.0.0
+    created: "2022-02-22T16:00:47.110365331Z"
+    description: A Helm chart to deploy the New Relic Kubernetes monitoring solution
+    digest: b2f996b5453fd009aa5a9aeb0341ac7ada9aa205890f435ba9883cf770c7e0a0
+    home: https://docs.newrelic.com/docs/kubernetes-pixie/kubernetes-integration/get-started/introduction-kubernetes-integration/
+    icon: https://newrelic.com/themes/custom/curio/assets/mediakit/NR_logo_Horizontal.svg
+    keywords:
+    - infrastructure
+    - newrelic
+    - monitoring
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: alvarocabanas
+      url: https://github.com/alvarocabanas
+    - name: carlossscastro
+      url: https://github.com/carlossscastro
+    - name: gsanchezgavier
+      url: https://github.com/gsanchezgavier
+    - name: kang-makes
+      url: https://github.com/kang-makes
+    - name: paologallinaharbur
+      url: https://github.com/paologallinaharbur
+    - name: roobre
+      url: https://github.com/roobre
+    name: newrelic-infrastructure-v3
+    sources:
+    - https://github.com/newrelic/nri-kubernetes/
+    - https://github.com/newrelic/helm-charts/tree/master/charts/newrelic-infrastructure
+    urls:
+    - https://github.com/newrelic-forks/helm-charts/releases/download/newrelic-infrastructure-v3-3.0.21/newrelic-infrastructure-v3-3.0.21.tgz
+    version: 3.0.21
+  - apiVersion: v2
+    appVersion: 3.0.0
     created: "2022-02-02T14:37:34.466785228Z"
     description: A Helm chart to deploy the New Relic Kubernetes monitoring solution
     digest: 320b9dc43d96a5f4d339b14dd415cca021ea9c65a69f09c4c85ee7d1341336bf
@@ -2044,6 +2100,30 @@ entries:
     - https://github.com/newrelic/helm-charts/releases/download/newrelic-infrastructure-v3-3.0.0/newrelic-infrastructure-v3-3.0.0.tgz
     version: 3.0.0
   newrelic-k8s-metrics-adapter:
+  - apiVersion: v1
+    appVersion: 0.2.0
+    created: "2022-02-22T16:00:47.303412375Z"
+    description: A Helm chart to deploy the New Relic Kubernetes Metrics Adapter.
+    digest: 7a6e1f7560901379464ed84f15c3d4a0d4186022e9db98361c71b346305dd873
+    home: https://hub.docker.com/r/newrelic/newrelic-k8s-metrics-adapter
+    icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
+    keywords:
+    - infrastructure
+    - newrelic
+    - monitoring
+    maintainers:
+    - name: alvarocabanas
+    - name: carlossscastro
+    - name: gsanchezgavier
+    - name: kang-makes
+    - name: paologallinaharbur
+    - name: roobre
+    name: newrelic-k8s-metrics-adapter
+    sources:
+    - https://github.com/newrelic/newrelic-k8s-metrics-adapter
+    urls:
+    - https://github.com/newrelic-forks/helm-charts/releases/download/newrelic-k8s-metrics-adapter-0.3.1/newrelic-k8s-metrics-adapter-0.3.1.tgz
+    version: 0.3.1
   - apiVersion: v1
     appVersion: 0.2.0
     created: "2022-02-10T13:24:41.554834818Z"
@@ -8381,6 +8461,28 @@ entries:
   nri-kube-events:
   - apiVersion: v1
     appVersion: 1.7.0
+    created: "2022-02-22T16:00:47.703743728Z"
+    description: A Helm chart to deploy the New Relic Kube Events
+    digest: e2da3990967bac22d74b5e07206914f68706cd3b9c5b68252f5ce5f3763a282b
+    home: https://docs.newrelic.com/docs/integrations/kubernetes-integration/kubernetes-events/install-kubernetes-events-integration
+    icon: https://newrelic.com/assets/newrelic/source/NewRelic-logo-square.svg
+    keywords:
+    - events
+    - newrelic
+    - monitoring
+    maintainers:
+    - name: alvarocabanas
+    - name: carlossscastro
+    - name: gsanchezgavier
+    - name: kang-makes
+    - name: paologallinaharbur
+    - name: roobre
+    name: nri-kube-events
+    urls:
+    - https://github.com/newrelic-forks/helm-charts/releases/download/nri-kube-events-1.13.0/nri-kube-events-1.13.0.tgz
+    version: 1.13.0
+  - apiVersion: v1
+    appVersion: 1.7.0
     created: "2022-01-24T18:41:56.872680798Z"
     description: A Helm chart to deploy the New Relic Kube Events
     digest: a703e4596304e1a3c24fac95c963caa21407bc99a60c30c598c21234cc7ed776
@@ -10854,4 +10956,4 @@ entries:
     urls:
     - https://github.com/newrelic/helm-charts/releases/download/synthetics-minion-1.0.17/synthetics-minion-1.0.17.tgz
     version: 1.0.17
-generated: "2022-02-10T13:24:42.109594289Z"
+generated: "2022-02-22T16:00:47.706530861Z"
