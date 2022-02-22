@@ -3,7 +3,7 @@ dependencies:
     alias: newrelic-infrastructure
     repository: file://../newrelic-infrastructure-v3
     condition: infrastructure.enabled
-    version: 3.0.16
+    version: 3.0.21
 
   - name: nri-prometheus
     repository: file://../nri-prometheus
@@ -18,7 +18,7 @@ dependencies:
   - name: newrelic-k8s-metrics-adapter
     repository: file://../newrelic-k8s-metrics-adapter
     condition: metrics-adapter.enabled
-    version: 0.3.0
+    version: 0.3.1
 
   - name: kube-state-metrics
     repository: https://kubernetes.github.io/kube-state-metrics
@@ -28,7 +28,7 @@ dependencies:
   - name: nri-kube-events
     repository: file://../nri-kube-events
     condition: kubeEvents.enabled
-    version: 1.12.1
+    version: 1.13.0
 
   - name: newrelic-logging
     repository: file://../newrelic-logging
