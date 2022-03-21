@@ -11,6 +11,12 @@ global:
     # The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template
     name:
+  hostNetwork:
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+licenseKey: foobar
 
 replicaCount: 1
 
@@ -38,6 +44,8 @@ podAnnotations: {}
 
 podSecurityContext: {}
   # fsGroup: 2000
+
+hostNetwork:
 
 securityContext: {}
   # capabilities:

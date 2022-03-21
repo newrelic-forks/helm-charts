@@ -17,27 +17,45 @@ spec:
       {{- end }}
       labels:
         {{- include "common.labels.selectorLabels" . | nindent 8 }}
+        {{- include "common.labels.podLabels" . | nindent 8 }}
     spec:
       {{- with include "common.images.renderPullSecrets" ( dict "pullSecrets" (list .Values.imagePullSecrets) "context" .) }}
       imagePullSecrets:
         {{- . | nindent 8 }}
       {{- end }}
+      {{- with include "common.hostNetwork" . }}
+      hostNetwork: {{ . }}
+      {{- end }}
       serviceAccountName: {{ include "common.serviceAccount.name" . }}
+      {{- with include "common.securityContext.pod" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- . | nindent 8 }}
+      {{- end }}
       {{- with include "common.priorityClassName" . }}
       priorityClassName: {{ . }}
       {{- end }}
+      {{- with include "common.dnsConfig" . }}
+      dnsConfig:
+        {{- . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
+          {{- with include "common.securityContext.container" . }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- . | nindent 12 }}
+          {{- end }}
           image: {{ include "common.images.image" ( dict "imageRoot" .Values.image "context" .) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
+          env:
+            - name: NRIA_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.license.secretName" . }}
+                  key: {{ include "common.license.secretKeyName" . }}
           livenessProbe:
             httpGet:
               path: /
@@ -48,15 +66,26 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+          env:
+            - name: CLUSTER_NAME
+              value: {{ include "common.cluster" . }}
+            - name: MY_APP_NON_OPTIONAL_ENV_VAR
+          {{- with include "common.proxy" . }}
+            - name: MY_APP_PROXY_URL
+              value: {{ . | quote }}
+          {{- end }}  
+          {{- if include "common.fedramp.enabled" . }}
+            - name: MY_APP_CUSTOM_ENDPOINT
+          {{- end }}
+      {{- with include "common.nodeSelector" . }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with include "common.affinity" . }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with include "common.tolerations" . }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- . | nindent 8 }}
       {{- end }}
