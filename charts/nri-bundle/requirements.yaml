@@ -3,7 +3,7 @@ dependencies:
     alias: newrelic-infrastructure
     repository: file://../newrelic-infrastructure-v3
     condition: infrastructure.enabled
-    version: 3.0.21
+    version: 3.1.0
 
   - name: nri-prometheus
     repository: file://../nri-prometheus
@@ -40,13 +40,13 @@ dependencies:
     condition: newrelic-pixie.enabled
     version: 1.5.0
 
-  - name: pixie-operator-helm2-chart
+  - name: pixie-operator-chart
     alias: pixie-chart
     repository: https://pixie-operator-charts.storage.googleapis.com
     condition: pixie-chart.enabled
-    version: 0.0.18
+    version: 0.0.19
 
   - name: newrelic-infra-operator
     repository: file://../newrelic-infra-operator
     condition: newrelic-infra-operator.enabled
-    version: 0.4.0
+    version: 0.5.0
