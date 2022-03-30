@@ -12,11 +12,13 @@ global:
     # If not set and create is true, a name is generated using the fullname template
     name:
   hostNetwork:
+  verboseLog:
   nodeSelector: {}
   tolerations: []
   affinity: {}
 
 licenseKey: foobar
+cluster: barfoo
 
 replicaCount: 1
 
@@ -46,6 +48,7 @@ podSecurityContext: {}
   # fsGroup: 2000
 
 hostNetwork:
+verboseLog:
 
 securityContext: {}
   # capabilities:

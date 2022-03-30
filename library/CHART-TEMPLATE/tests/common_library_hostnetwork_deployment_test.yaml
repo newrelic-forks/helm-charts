@@ -1,12 +1,9 @@
-suite: test hostNetwork helper
+suite: test hostNetwork helper in the deployment template
 templates:
   - templates/deployment.yaml
 release:
   name: my-release
   namespace: my-namespace
-set:
-  licenseKey: test-license-key
-  cluster: test-cluster
 tests:
   - it: Is false by default
     asserts:
