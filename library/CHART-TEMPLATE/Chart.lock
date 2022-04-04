@@ -1,6 +1,6 @@
 dependencies:
 - name: common-library
   repository: file://../common-library
-  version: 0.15.1
-digest: sha256:1e8423fe07f82a37502affc6e512f00e3c2a115901ff2135ab50a5b8d21616c7
-generated: "2022-03-30T12:56:28.866008+02:00"
+  version: 0.17.0
+digest: sha256:950935e81448724d0090d32db65a65c4fe822ebc048bb75337b9c12027d84b73
+generated: "2022-03-31T11:35:53.020887+02:00"
