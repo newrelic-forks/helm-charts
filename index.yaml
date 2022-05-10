@@ -2,6 +2,35 @@ apiVersion: v1
 entries:
   common-library:
   - apiVersion: v2
+    created: "2022-05-10T09:59:30.070075471Z"
+    description: Provides helpers to provide consistency on all the charts
+    digest: 19dde3beef80667aeb64ee4986940e6768501b530230324183bc32e669e0067b
+    keywords:
+    - newrelic
+    - chart-library
+    maintainers:
+    - name: alvarocabanas
+      url: https://github.com/alvarocabanas
+    - name: carlossscastro
+      url: https://github.com/carlossscastro
+    - name: sigilioso
+      url: https://github.com/sigilioso
+    - name: gsanchezgavier
+      url: https://github.com/gsanchezgavier
+    - name: kang-makes
+      url: https://github.com/kang-makes
+    - name: marcsanmi
+      url: https://github.com/marcsanmi
+    - name: paologallinaharbur
+      url: https://github.com/paologallinaharbur
+    - name: roobre
+      url: https://github.com/roobre
+    name: common-library
+    type: library
+    urls:
+    - https://github.com/newrelic-forks/helm-charts/releases/download/common-library-1.0.4/common-library-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
     created: "2022-04-13T08:08:21.493019549Z"
     description: Provides helpers to provide consistency on all the charts
     digest: 4bfc854f5137544db54cefc667b51f04385dc08118b8381dea984b53f2c3921f
@@ -11376,4 +11405,4 @@ entries:
     urls:
     - https://github.com/newrelic/helm-charts/releases/download/synthetics-minion-1.0.17/synthetics-minion-1.0.17.tgz
     version: 1.0.17
-generated: "2022-04-13T08:08:21.499511102Z"
+generated: "2022-05-10T09:59:30.07246351Z"
