@@ -28,6 +28,6 @@ dependencies:
   version: 0.0.30
 - name: newrelic-infra-operator
   repository: https://newrelic.github.io/newrelic-infra-operator
-  version: 1.0.5
-digest: sha256:47bdd4028bc5c3cebd3408f300b484227d9d7b454c8362a8f3d42083f1cc95b1
-generated: "2022-08-29T14:49:00.555795+02:00"
+  version: 1.0.11
+digest: sha256:ed71f324d4f9c15bbd0f43dea7811b0fedd2ee9e7059ed892a3132ce96926e32
+generated: "2023-03-22T00:03:34.249288302Z"
