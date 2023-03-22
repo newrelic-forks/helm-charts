@@ -22,12 +22,12 @@ dependencies:
   version: 1.11.5
 - name: newrelic-pixie
   repository: https://newrelic.github.io/helm-charts
-  version: 2.0.1
+  version: 2.0.6
 - name: pixie-operator-chart
   repository: https://pixie-operator-charts.storage.googleapis.com
   version: 0.0.30
 - name: newrelic-infra-operator
   repository: https://newrelic.github.io/newrelic-infra-operator
   version: 1.0.5
-digest: sha256:47bdd4028bc5c3cebd3408f300b484227d9d7b454c8362a8f3d42083f1cc95b1
-generated: "2022-08-29T14:49:00.555795+02:00"
+digest: sha256:288b21a23811abb4c8b95ed87d443d47d7c57117348c905e18a5ef5be96a2c09
+generated: "2023-03-22T15:09:33.069947745Z"
