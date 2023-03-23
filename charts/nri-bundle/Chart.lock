@@ -25,9 +25,9 @@ dependencies:
   version: 2.0.1
 - name: pixie-operator-chart
   repository: https://pixie-operator-charts.storage.googleapis.com
-  version: 0.0.30
+  version: 0.0.38
 - name: newrelic-infra-operator
   repository: https://newrelic.github.io/newrelic-infra-operator
   version: 1.0.5
-digest: sha256:47bdd4028bc5c3cebd3408f300b484227d9d7b454c8362a8f3d42083f1cc95b1
-generated: "2022-08-29T14:49:00.555795+02:00"
+digest: sha256:08b48c5d336265ace1c9c47fcc1500ee5bd1e0f44f8d64b4c944c0d71d0a62a6
+generated: "2023-03-23T07:55:15.397769314Z"
